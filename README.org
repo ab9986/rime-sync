@@ -1,0 +1,72 @@
+* rime-sync
+rime config
+参考资料：https://github.com/rime/home/wiki/CustomizationGuide
+1. patch补丁原理
+   luna_pinyin_simp.custom.yaml 给 build\luna_pinyin_simp.schema.yaml 打补丁
+   default.custom.yaml 给 default.yaml 打补丁
+   写在patch里面就可以打补丁
+2. 配置文件
+   ;;C:\Users\用户名\AppData\Roaming\Rime\luna_pinyin_simp.custom.yaml
+   #+BEGIN_SRC    
+patch:
+  ;;使用全套西文標點
+  ;;有些用戶習慣在中文裏使用ASCII標點，那麼與其一個一個覆寫，不如 整套都換掉 。
+  ;;取得這份設定檔—— Rime 別樣設定，使用西文標點 在用戶資料夾保存爲 alternative.yaml ；
+  ;;再將輸入方案中的「導入 default 設定」通過打 patch 替換爲「導入 alternative 設定」
+  ;;# luna_pinyin.custom.yaml
+  ;;patch:
+  ;;屏蔽默认按键绑定的
+  key_binder/import_preset: 
+  ;;只绑定+ - 方向键-向上 方向键-向下
+  key_binder/bindings:
+    - {accept: minus, send: Page_Up, when: has_menu}
+    - {accept: equal, send: Page_Down, when: has_menu}
+    - {accept: comma, send: Page_Up, when: paging}
+    - {accept: period, send: Page_Down, when: has_menu}
+  ;;默认为进入应用默认英文
+  switches/@ascii_mode/reset: 1
+  ;;状态栏位显示图标
+  style/display_tray_icon: true
+   #+END_SRC
+   ;;C:\Users\用户名\AppData\Roaming\Rime\default.custom.yaml 在patch:增加
+   #+BEGIN_SRC 
+   ;;增加按shift返回英文
+  ascii_composer/switch_key/Shift_L: commit_code
+  ascii_composer/switch_key/Shift_R: commit_code
+  ;;状态通知始终显示
+  show_notifications_when: always
+  #+END_SRC
+  
+3. 词库，参考https://www.jianshu.com/p/300bbe1602d4 
+   1. 新建 简化字自定义配置文件 luna_pinyin_simp.custom.yaml 输入内容
+      (自定义配置文件名字格式: 简化字名称.custom.yaml)
+      #+BEGIN_SRC 
+# luna_pinyin_simp.custom.yaml
+patch:
+# 指定自定义词库位置
+  "translator/dictionary": luna_pinyin.my
+#+END_SRC
+   2. 新建luna_pinyin.my.dict.yaml (文件名和上面指定词库位置保持一致)输入内容
+      (词典名字格式: 名称.dict.yaml)
+      #+BEGIN_SRC 
+---
+name: luna_pinyin.my
+version: "1.0"
+sort: by_weight
+use_preset_vocabulary: true
+# 此处为扩充词库（基本）默认链接载入的词库
+import_tables:
+  - luna_pinyin
+...
+# 自定义词语
+英雄联盟    ying xiong leng meng    100
+吃鸡联盟    chi ji lian meng    100
+#+END_SRC
+4. 个人词库配置
+   在installation.yaml中增加,然后放到C:\Users\用户名\AppData\Roaming\Rime\，重新部署，右键-用户资料同步。
+   #+BEGIN_SRC 
+   installation_id: "ab9986"
+   sync_dir: D:\ab9986\home\rime-sync   
+   #+END_SRC
+   
+   
